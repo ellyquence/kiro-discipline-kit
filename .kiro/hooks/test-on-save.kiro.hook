@@ -1,0 +1,39 @@
+name: Test Synchronization
+description: Keeps tests updated with source code changes
+
+when:
+  type: fileEdit
+  patterns:
+    - "src/**/*.ts"
+    - "src/**/*.py"
+    - "!src/**/*.test.ts"
+    - "!src/**/*_test.py"
+
+then:
+  type: askAgent
+  prompt: |
+    Source file modified. Check test coverage.
+
+    1. Identify corresponding test file:
+       - For src/path/file.ts → src/path/file.test.ts or tests/path/file.test.ts
+       - For src/path/file.py → tests/path/test_file.py or src/path/file_test.py
+
+    2. Analyze changes:
+       - What functions/methods were added or modified?
+       - What code paths changed?
+       - What edge cases emerged?
+
+    3. Test coverage check:
+       - Does test file exist?
+       - Are new functions tested?
+       - Are modified code paths covered?
+
+    4. If coverage gaps found:
+       - Suggest test cases for new functionality
+       - Suggest edge case tests
+       - Follow AAA pattern (Arrange, Act, Assert)
+
+    5. Output:
+       TEST_FILE: [path or MISSING]
+       COVERAGE_GAPS: [list of untested functions/paths]
+       SUGGESTED_TESTS: [test case descriptions]

@@ -1,0 +1,34 @@
+name: Architecture Documentation Sync
+description: Ensures architecture docs stay in sync with code changes
+
+when:
+  type: fileEdit
+  patterns:
+    - "src/**/*.ts"
+    - "src/**/*.py"
+    - "src/**/*.tsx"
+    - "package.json"
+    - "pyproject.toml"
+
+then:
+  type: askAgent
+  prompt: |
+    Architecture drift detection triggered by file changes.
+
+    1. Check if changes affect:
+       - External dependencies (new imports from node_modules or site-packages)
+       - API contracts (new/modified endpoints, changed interfaces)
+       - Data models (schema changes, new entities)
+       - Component boundaries (new modules, cross-layer imports)
+
+    2. If architectural impact detected:
+       - List the specific changes that affect architecture
+       - Check if .kiro/specs/*/design.md documents these patterns
+       - Suggest updates needed to architecture documentation
+       - Flag any layer violations (e.g., domain importing from adapters)
+
+    3. Output format:
+       ARCHITECTURE_IMPACT: [NONE | LOW | MEDIUM | HIGH]
+       CHANGES_DETECTED: [list of architectural changes]
+       DOCS_TO_UPDATE: [list of files needing updates]
+       VIOLATIONS: [any architectural violations found]
