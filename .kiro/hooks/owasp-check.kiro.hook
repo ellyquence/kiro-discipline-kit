@@ -1,0 +1,93 @@
+name: OWASP Security Pattern Check
+description: Detects common security vulnerabilities based on OWASP Top 10:2025
+
+when:
+  type: fileEdit
+  patterns:
+    - "src/**/*.ts"
+    - "src/**/*.js"
+    - "src/**/*.py"
+    - "src/**/*.tsx"
+    - "src/**/*.jsx"
+
+then:
+  type: askAgent
+  prompt: |
+    Analyze the modified code for OWASP Top 10:2025 vulnerabilities.
+
+    ## Check for These Patterns
+
+    ### A01: Broken Access Control
+    - Missing authorization checks before data access
+    - Direct object references without ownership validation
+    - Hardcoded role checks instead of proper RBAC
+    - Missing rate limiting on sensitive endpoints
+
+    Red flags:
+    - `db.find(id)` without checking `userId` match
+    - `req.params.id` used directly without authorization
+    - No middleware protecting admin routes
+
+    ### A03: Injection Vulnerabilities
+
+    **SQL Injection:**
+    - String concatenation in queries: `query = "SELECT * FROM users WHERE id = " + id`
+    - Template literals in queries: `\`SELECT * FROM ${table}\``
+    - Non-parameterized queries
+
+    **Command Injection:**
+    - `exec()` or `spawn()` with user input
+    - Shell command construction with variables
+
+    **XSS:**
+    - `innerHTML = userInput`
+    - `dangerouslySetInnerHTML` without sanitization
+    - `document.write()` with user data
+    - Unescaped template output
+
+    ### A04: Cryptographic Failures
+    - Weak algorithms: MD5, SHA1 for passwords, DES, RC4
+    - Hardcoded encryption keys or IVs
+    - ECB mode usage
+    - Missing HTTPS enforcement
+
+    ### A07: Authentication Failures
+    - Plain text password storage
+    - Weak password hashing (bcrypt < 10 rounds)
+    - Missing session invalidation on logout
+    - Predictable session tokens
+
+    ### A09: Logging Failures
+    - Logging sensitive data (passwords, tokens, PII)
+    - Missing security event logging
+    - Unprotected log files
+
+    ### A10: Exceptional Condition Handling
+    - Catch blocks that expose stack traces
+    - Error messages revealing system internals
+    - Missing error handling on security operations
+
+    ## Output Format
+
+    ```
+    SECURITY_SCAN_RESULT: [PASS | WARN | FAIL]
+
+    VULNERABILITIES_FOUND: [count]
+
+    [For each finding:]
+    FINDING: [OWASP ID] - [Name]
+    SEVERITY: [CRITICAL | HIGH | MEDIUM | LOW]
+    LINE: [line number]
+    CODE: [relevant code snippet]
+    ISSUE: [What's wrong]
+    FIX: [How to fix it]
+    EXAMPLE: [Secure code example]
+
+    ---
+
+    RECOMMENDATIONS:
+    - [List of security improvements]
+    ```
+
+    Be thorough but avoid false positives. Only flag actual security issues,
+    not stylistic preferences. Focus on the most critical issues first.

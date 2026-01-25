@@ -44,29 +44,36 @@ Project config:     <project>\.kiro\           (recommended)
 
 ```
 .kiro/
-├── steering/                    # AI behavior rules
+├── steering/                    # AI behavior rules (9 files)
 │   ├── global.md               # Core standards (always active)
 │   ├── architecture.md         # Living docs requirements
 │   ├── backlog.md              # Task management rules
 │   ├── decomposition.md        # Component size limits
 │   ├── quality.md              # Quality gates
+│   ├── security.md             # OWASP Top 10, DevSecOps (NEW)
+│   ├── api-security.md         # API security patterns (NEW)
 │   ├── typescript.md           # TS/JS rules (fileMatch: **/*.ts)
 │   └── python.md               # Python rules (fileMatch: **/*.py)
 │
-├── hooks/                       # Automated checks
+├── hooks/                       # Automated checks (8 hooks)
 │   ├── architecture-sync.kiro.hook    # Drift detection
 │   ├── task-hygiene.kiro.hook         # Backlog compliance
 │   ├── component-check.kiro.hook      # Size/coupling validation
 │   ├── doc-generation.kiro.hook       # Doc coverage
 │   ├── test-on-save.kiro.hook         # Test sync
-│   └── security-scan.kiro.hook        # Dependency audit
+│   ├── security-scan.kiro.hook        # Dependency audit
+│   ├── secret-scan.kiro.hook          # Hardcoded secrets (NEW)
+│   └── owasp-check.kiro.hook          # OWASP vulnerability scan (NEW)
 │
-├── templates/                   # Spec templates
+├── templates/                   # Spec templates (8 templates)
 │   ├── requirements.md         # EARS notation requirements
 │   ├── design.md               # C4 model architecture
 │   ├── tasks.md                # MoSCoW prioritized backlog
 │   ├── component-spec.md       # Component documentation
-│   └── decision-record.md      # ADR template
+│   ├── decision-record.md      # ADR template
+│   ├── threat-model.md         # STRIDE threat modeling (NEW)
+│   ├── security-review.md      # Security code review checklist (NEW)
+│   └── incident-response.md    # Incident response runbook (NEW)
 │
 ├── settings/
 │   └── mcp.json                # MCP server configuration
@@ -342,6 +349,48 @@ then:
 - `decomposition.md` sets size limits (300 lines/file, 50 lines/function)
 - `component-check.kiro.hook` validates boundaries
 - Clean architecture layers enforced
+
+### 4. DevSecOps (Security-First Development)
+- `security.md` enforces OWASP Top 10:2025 prevention patterns
+- `api-security.md` covers API auth, authorization, rate limiting
+- `secret-scan.kiro.hook` detects hardcoded credentials before commit
+- `owasp-check.kiro.hook` scans for injection, XSS, auth issues
+- Templates for threat modeling, security reviews, incident response
+
+## DevSecOps Coverage
+
+### OWASP Top 10:2025 Prevention
+
+| Risk | Steering Rule | Hook Detection |
+|------|--------------|----------------|
+| A01: Broken Access Control | Object-level auth required | `owasp-check` |
+| A02: Security Misconfiguration | Hardening checklist | `security-scan` |
+| A03: Supply Chain Failures | Dependency pinning rules | `security-scan` |
+| A04: Cryptographic Failures | Approved algorithms only | `owasp-check` |
+| A05: Injection | Parameterized queries required | `owasp-check` |
+| A06: Insecure Design | Threat modeling required | Templates |
+| A07: Auth Failures | MFA, session management rules | `owasp-check` |
+| A08: Integrity Failures | Signature verification | `security-scan` |
+| A09: Logging Failures | Security event logging | `owasp-check` |
+| A10: Exceptional Conditions | Fail-secure patterns | `owasp-check` |
+
+### Secret Detection Patterns
+
+The `secret-scan.kiro.hook` detects:
+- AWS keys (`AKIA...`)
+- GitHub/GitLab tokens
+- Stripe, Slack, Google API keys
+- Private keys (RSA, EC, PGP)
+- Database connection strings with passwords
+- Generic password/secret assignments
+
+### Security Templates
+
+| Template | Purpose |
+|----------|---------|
+| `threat-model.md` | STRIDE analysis, risk assessment, mitigation planning |
+| `security-review.md` | Code review checklist (auth, input, crypto, etc.) |
+| `incident-response.md` | Runbook for security incidents |
 
 ## Success Criteria
 
