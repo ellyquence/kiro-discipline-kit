@@ -1,0 +1,39 @@
+name: Component Boundary Validation
+description: Enforces functional decomposition and size limits
+
+when:
+  type: fileEdit
+  patterns:
+    - "src/**/*.ts"
+    - "src/**/*.py"
+    - "src/**/*.tsx"
+
+then:
+  type: askAgent
+  prompt: |
+    Component boundary check on edited file.
+
+    1. Size validation:
+       - Count lines in modified file
+       - Flag if file > 300 lines
+       - Flag if any function > 50 lines
+       - Flag if class > 200 lines
+
+    2. Coupling analysis:
+       - List all imports in the file
+       - Check for layer violations:
+         * domain/ should not import from adapters/
+         * application/ should not import directly from external packages
+         * adapters/ should implement interfaces from ports/
+       - Flag circular dependencies if detectable
+
+    3. Cohesion check:
+       - Does file have single clear responsibility?
+       - Are all exported functions related?
+       - Should any code be extracted to shared/?
+
+    4. Output format:
+       FILE_SIZE: [lines] [OK | WARN | SPLIT_NEEDED]
+       LARGEST_FUNCTION: [name] [lines] [OK | EXTRACT_NEEDED]
+       COUPLING_VIOLATIONS: [list or NONE]
+       SPLIT_SUGGESTIONS: [recommendations if needed]

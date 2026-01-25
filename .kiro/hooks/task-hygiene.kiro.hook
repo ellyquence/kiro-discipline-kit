@@ -1,0 +1,31 @@
+name: Task Hygiene Check
+description: Validates task format and backlog rules before coding
+
+when:
+  type: fileCreate
+  patterns:
+    - "src/**/*"
+
+then:
+  type: askAgent
+  prompt: |
+    New file creation detected. Verify backlog hygiene:
+
+    1. Check for active task context:
+       - Is there a current task in .kiro/specs/*/tasks.md marked IN_PROGRESS?
+       - Does the new file relate to documented acceptance criteria?
+
+    2. Validate task compliance:
+       - New file should map to a requirement in requirements.md
+       - Task size should be M or smaller for active work
+       - Dependencies should be resolved (no BLOCKED status)
+
+    3. If no task context found:
+       - WARN: Creating code without linked task
+       - Suggest: Create task in backlog first
+       - Ask: Which requirement does this implement?
+
+    4. Output:
+       TASK_LINKED: [YES | NO | UNCLEAR]
+       REQUIREMENT_REF: [requirement ID if found]
+       ACTION_NEEDED: [suggested action if hygiene violated]
