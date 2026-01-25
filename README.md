@@ -355,4 +355,4 @@ You're done when:
 
 ## License
 
-MIT - Use and modify freely.
+Apache 2.0 - See [LICENSE](LICENSE) for details.
