@@ -130,8 +130,11 @@ echo ""
 
 if [ "$GLOBAL_INSTALL" = true ]; then
     print_warning "Global installation is experimental."
-    print_info "Kiro may not automatically load from ~/.config/kiro/"
-    print_info "Consider using symlinks in each project instead."
+    print_info "Steering files: Kiro MAY load from global location"
+    print_info "Hooks: Will NOT load globally — hooks are project-only"
+    print_info "You must copy hooks to each project's .kiro/hooks/ folder"
+    echo ""
+    print_info "Recommended: Use per-project installation instead"
 fi
 
 echo ""

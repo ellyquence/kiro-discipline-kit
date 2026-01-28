@@ -21,10 +21,12 @@ cd /path/to/your/project
 
 ## File Paths Reference
 
+> **Note:** Steering files can be global, but **hooks are project-only**. Hooks must be copied to each project's `.kiro/hooks/` folder — they will not load from global locations.
+
 ### Linux Paths
 ```
-Global config:      ~/.config/kiro/           (experimental)
-Project config:     <project>/.kiro/          (recommended)
+Global config:      ~/.config/kiro/           (steering only, experimental)
+Project config:     <project>/.kiro/          (recommended - includes hooks)
 This template:      ~/KiroSpecs/.kiro/
 ```
 
@@ -125,7 +127,7 @@ ls .kiro/steering/
 # Should show: 7 .md files
 
 ls .kiro/hooks/
-# Should show: 6 .kiro.hook files
+# Should show: 7 .kiro.hook files
 ```
 
 ### 2. Restart Kiro IDE
@@ -303,22 +305,30 @@ fileMatchPattern: "**/*.go"
 
 ### Adding a New Hook
 
+> **Important:** Hooks are project-only. Unlike steering files, hooks do NOT load from global locations. You must copy hooks to each project's `.kiro/hooks/` folder.
+
 1. Create file in `.kiro/hooks/my-hook.kiro.hook`:
-```yaml
-name: My Custom Hook
-description: What this hook does
-
-when:
-  type: fileEdit
-  patterns:
-    - "src/**/*.ts"
-
-then:
-  type: askAgent
-  prompt: |
-    Your prompt to the agent here.
-    Can be multi-line.
+```json
+{
+  "enabled": true,
+  "name": "My Custom Hook",
+  "description": "What this hook does",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["src/**/*.ts"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Your prompt to the agent here."
+  }
+}
 ```
+
+**Required fields:**
+- `enabled`: Must be `true` for hook to activate
+- `version`: Use `"1"`
+- `when.type`: `fileEdited`, `fileCreated`, `fileDeleted`, `promptSubmit`, or `agentStop`
 
 ### Adding a New Template
 
