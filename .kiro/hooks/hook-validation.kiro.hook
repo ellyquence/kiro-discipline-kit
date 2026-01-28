@@ -1,0 +1,14 @@
+{
+  "name": "Hook File Validation",
+  "description": "Validates hook files are valid JSON when edited",
+  "when": {
+    "type": "fileEdit",
+    "patterns": [
+      ".kiro/hooks/*.kiro.hook"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A hook file was edited. Validate it has correct JSON syntax and structure.\n\n## Validation Check\n\n1. **JSON Syntax** - Is it valid JSON? Check for:\n   - Missing commas\n   - Unquoted keys\n   - Trailing commas\n   - Mismatched brackets\n\n2. **Required Fields** - Verify presence of:\n   - name (string)\n   - when.type (string)\n   - when.patterns (array) - for fileEdit type\n   - then.type (string)\n   - then.prompt (string) - for askAgent type\n\n3. **Field Values** - Check valid values:\n   - when.type: fileEdit, fileCreate, fileDelete, promptSubmit, agentStop\n   - then.type: askAgent, runCommand\n\n## Output Format\n\nHOOK VALIDATION\n===============\nFile: [filename]\nJSON Syntax: [Valid/Invalid]\nStructure: [Valid/Invalid]\n\nIssues found (if any).\n\nSTATUS: [PASS/FIX REQUIRED]"
+  }
+}

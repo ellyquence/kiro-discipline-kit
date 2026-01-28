@@ -1,37 +1,18 @@
-name: Security Scan on Dependencies
-description: Scans for security issues when dependencies change
-
-when:
-  type: fileEdit
-  patterns:
-    - "package.json"
-    - "package-lock.json"
-    - "pyproject.toml"
-    - "requirements.txt"
-    - "poetry.lock"
-
-then:
-  type: askAgent
-  prompt: |
-    Dependency file changed. Perform security review.
-
-    1. Dependency audit:
-       - Check for known vulnerabilities in changed packages
-       - Flag packages with no recent updates (>2 years)
-       - Identify packages with permissive licenses if relevant
-
-    2. New dependency review:
-       - Is the package from a trusted source?
-       - What permissions/capabilities does it require?
-       - Is it actively maintained?
-       - Are there lighter alternatives?
-
-    3. Security checklist:
-       - [ ] No hardcoded credentials in dependency configs
-       - [ ] Version pinned (not floating)
-       - [ ] Package audit clean (npm audit / pip-audit)
-
-    4. Output:
-       NEW_DEPENDENCIES: [list]
-       VULNERABILITY_WARNINGS: [any CVEs or concerns]
-       RECOMMENDATIONS: [security suggestions]
+{
+  "name": "Security Scan on Dependencies",
+  "description": "Scans for security issues when dependencies change",
+  "when": {
+    "type": "fileEdit",
+    "patterns": [
+      "package.json",
+      "package-lock.json",
+      "pyproject.toml",
+      "requirements.txt",
+      "poetry.lock"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Dependency file changed. Perform security review.\n\n1. Dependency audit:\n   - Check for known vulnerabilities in changed packages\n   - Flag packages with no recent updates (>2 years)\n   - Identify packages with permissive licenses if relevant\n\n2. New dependency review:\n   - Is the package from a trusted source?\n   - What permissions/capabilities does it require?\n   - Is it actively maintained?\n   - Are there lighter alternatives?\n\n3. Security checklist:\n   - [ ] No hardcoded credentials in dependency configs\n   - [ ] Version pinned (not floating)\n   - [ ] Package audit clean (npm audit / pip-audit)\n\n4. Output:\n   NEW_DEPENDENCIES: [list]\n   VULNERABILITY_WARNINGS: [any CVEs or concerns]\n   RECOMMENDATIONS: [security suggestions]"
+  }
+}

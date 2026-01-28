@@ -1,0 +1,84 @@
+name: Validate Kiro Hooks
+
+on:
+  push:
+    paths:
+      - '.kiro/hooks/**'
+  pull_request:
+    paths:
+      - '.kiro/hooks/**'
+  workflow_dispatch:
+
+jobs:
+  validate-json:
+    name: Validate Hook JSON Syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find and validate hook files
+        run: |
+          echo "Validating .kiro.hook files..."
+
+          ERRORS=0
+
+          for file in $(find .kiro/hooks -name "*.kiro.hook" 2>/dev/null); do
+            echo -n "Checking $file... "
+            if jq empty "$file" 2>/dev/null; then
+              echo "✓ Valid JSON"
+            else
+              echo "✗ Invalid JSON"
+              echo "Error details:"
+              jq . "$file" 2>&1 || true
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
+          echo ""
+          echo "================================"
+
+          if [ $ERRORS -gt 0 ]; then
+            echo "❌ $ERRORS hook file(s) have invalid JSON"
+            exit 1
+          else
+            TOTAL=$(find .kiro/hooks -name "*.kiro.hook" | wc -l)
+            echo "✅ All $TOTAL hook files are valid JSON"
+          fi
+
+      - name: Validate hook structure
+        run: |
+          echo "Validating hook structure..."
+
+          ERRORS=0
+
+          for file in $(find .kiro/hooks -name "*.kiro.hook" 2>/dev/null); do
+            echo -n "Checking structure of $file... "
+
+            # Check required fields exist
+            NAME=$(jq -r '.name // empty' "$file")
+            WHEN_TYPE=$(jq -r '.when.type // empty' "$file")
+            THEN_TYPE=$(jq -r '.then.type // empty' "$file")
+
+            MISSING=""
+            [ -z "$NAME" ] && MISSING="$MISSING name"
+            [ -z "$WHEN_TYPE" ] && MISSING="$MISSING when.type"
+            [ -z "$THEN_TYPE" ] && MISSING="$MISSING then.type"
+
+            if [ -z "$MISSING" ]; then
+              echo "✓ Valid structure"
+            else
+              echo "✗ Missing required fields:$MISSING"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
+          echo ""
+          echo "================================"
+
+          if [ $ERRORS -gt 0 ]; then
+            echo "❌ $ERRORS hook file(s) have structural issues"
+            exit 1
+          else
+            echo "✅ All hooks have valid structure"
+          fi
