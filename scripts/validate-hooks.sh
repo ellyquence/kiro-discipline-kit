@@ -32,11 +32,15 @@ for file in "$HOOKS_DIR"/*.kiro.hook; do
   NAME=$(jq -r '.name // empty' "$file")
   WHEN_TYPE=$(jq -r '.when.type // empty' "$file")
   THEN_TYPE=$(jq -r '.then.type // empty' "$file")
+  ENABLED=$(jq -r '.enabled // empty' "$file")
+  VERSION=$(jq -r '.version // empty' "$file")
 
   MISSING=""
   [ -z "$NAME" ] && MISSING="name "
   [ -z "$WHEN_TYPE" ] && MISSING="${MISSING}when.type "
-  [ -z "$THEN_TYPE" ] && MISSING="${MISSING}then.type"
+  [ -z "$THEN_TYPE" ] && MISSING="${MISSING}then.type "
+  [ -z "$ENABLED" ] && MISSING="${MISSING}enabled "
+  [ -z "$VERSION" ] && MISSING="${MISSING}version"
 
   if [ -n "$MISSING" ]; then
     echo "❌ Missing: $MISSING"

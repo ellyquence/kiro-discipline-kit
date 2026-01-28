@@ -2,7 +2,7 @@
   "name": "Documentation Generation",
   "description": "Auto-generates and updates documentation",
   "when": {
-    "type": "fileEdit",
+    "type": "fileEdited",
     "patterns": [
       "src/**/index.ts",
       "src/**/__init__.py",
@@ -13,5 +13,7 @@
   "then": {
     "type": "askAgent",
     "prompt": "Public interface changed. Check documentation status.\n\n1. Analyze exports:\n   - List all public exports from the modified file\n   - Identify new or changed function signatures\n   - Identify new or changed type definitions\n\n2. Documentation validation:\n   - Check if all public functions have JSDoc/docstrings\n   - Verify @param, @returns, @throws annotations\n   - Check for usage @example in complex functions\n\n3. Component README check:\n   - Does component folder have README.md?\n   - Does README document the public interface?\n   - Are breaking changes noted?\n\n4. Generate missing docs:\n   - Suggest JSDoc/docstring for undocumented exports\n   - Suggest README updates for new capabilities\n\n5. Output:\n   UNDOCUMENTED_EXPORTS: [list]\n   SUGGESTED_DOCS: [documentation to add]\n   README_UPDATE_NEEDED: [YES | NO]"
-  }
+  },
+  "enabled": true,
+  "version": "1"
 }
